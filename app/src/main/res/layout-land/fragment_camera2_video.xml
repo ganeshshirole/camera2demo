@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.example.android.camera2.video.java_fragments.AutoFitTextureView
+        android:id="@+id/texture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_below="@id/texture"
+        android:layout_toEndOf="@id/texture"
+        android:background="#4285f4"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/video"
+            android:layout_width="96dp"
+            android:layout_height="92dp"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="96dp"
+            android:background="@drawable/ic_shutter"
+            android:contentDescription="@string/capture"
+            android:scaleType="fitCenter" />
+
+    </FrameLayout>
+
+</RelativeLayout>
