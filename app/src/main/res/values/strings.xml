@@ -18,7 +18,7 @@
     <string name="capture">Capture</string>
     <string name="error_file_not_found">Recorded file not found</string>
     <string name="recorder_shutdown_error">Recording stops too fast, please press longer</string>
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="record">Record</string>
     <string name="description_info">Record</string>
@@ -26,4 +26,6 @@
     <string name="permission_request">Test Message</string>
     <string name="camera_error">Camera Error</string>
     <string name="stop">Stop</string>
+    <string name="placeholder_text">30</string>
+    <string name="title">Title</string>
 </resources>

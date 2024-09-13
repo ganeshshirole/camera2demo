@@ -7,14 +7,39 @@
 
     <fragment
         android:id="@+id/camera2_video_fragment"
-        android:name="com.example.android.camera2.video.java_fragments.Camera2VideoFragment"
+        android:name="com.example.android.camera2.video.java_fragments.camera.Camera2VideoFragment"
         android:label="Video" >
+
+        <action
+            android:id="@+id/action_camera2_video_fragment_to_video_list_fragment"
+            app:destination="@id/video_list_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/video_list_fragment"
+        android:name="com.example.android.camera2.video.java_fragments.video_list.VideoListFragment"
+        android:label="Video List" >
+
+        <action
+            android:id="@+id/action_video_list_fragment_to_video_player_fragment"
+            app:destination="@id/video_player_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/video_player_fragment"
+        android:name="com.example.android.camera2.video.java_fragments.video_player.VideoPlayerFragment"
+        android:label="Video Player" >
+
+        <argument
+            android:name="video_path"
+            app:argType="string"
+            app:nullable="false"/>
 
     </fragment>
 
     <fragment
         android:id="@+id/permissions_fragment"
-        android:name="com.example.android.camera2.video.fragments.PermissionsFragment"
+        android:name="com.example.android.camera2.video.kt_fragments.PermissionsFragment"
         android:label="Permissions" >
 
         <action
@@ -27,7 +52,7 @@
 
     <fragment
         android:id="@+id/selector_fragment"
-        android:name="com.example.android.camera2.video.fragments.SelectorFragment"
+        android:name="com.example.android.camera2.video.kt_fragments.SelectorFragment"
         android:label="Selector" >
 
         <action
@@ -38,7 +63,7 @@
 
     <fragment
         android:id="@+id/preview_fragment"
-        android:name="com.example.android.camera2.video.fragments.PreviewFragment"
+        android:name="com.example.android.camera2.video.kt_fragments.PreviewFragment"
         android:label="Preview" >
 
         <argument
