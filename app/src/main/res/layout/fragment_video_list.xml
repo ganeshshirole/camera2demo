@@ -25,6 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
-        tools:listitem="@layout/item_video"/>
+        tools:listitem="@layout/item_video" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

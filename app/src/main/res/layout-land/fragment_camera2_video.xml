@@ -63,7 +63,7 @@
             android:background="@drawable/rounded_textfield_background"
             android:padding="10dp"
             android:text="@string/placeholder_text"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/video"
             app:layout_constraintEnd_toEndOf="@+id/video"
@@ -72,5 +72,29 @@
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/fastMovementMessageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="TextView"
+        android:textColor="@color/white"
+        android:background="@drawable/textfield_background"
+        app:layout_constraintBottom_toBottomOf="@+id/texture"
+        app:layout_constraintEnd_toEndOf="@+id/texture"
+        app:layout_constraintStart_toStartOf="@+id/texture"
+        app:layout_constraintTop_toTopOf="@+id/texture" />
+
+    <TextView
+        android:id="@+id/reverseDirectionMessageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/textfield_background"
+        android:layout_marginTop="16dp"
+        tools:text="TextView"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/texture"
+        app:layout_constraintStart_toStartOf="@+id/texture"
+        app:layout_constraintTop_toBottomOf="@+id/fastMovementMessageTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
     app:startDestination="@id/camera2_video_fragment">
@@ -8,7 +7,7 @@
     <fragment
         android:id="@+id/camera2_video_fragment"
         android:name="com.example.android.camera2.video.java_fragments.camera.Camera2VideoFragment"
-        android:label="Video" >
+        android:label="Video">
 
         <action
             android:id="@+id/action_camera2_video_fragment_to_video_list_fragment"
@@ -18,7 +17,7 @@
     <fragment
         android:id="@+id/video_list_fragment"
         android:name="com.example.android.camera2.video.java_fragments.video_list.VideoListFragment"
-        android:label="Video List" >
+        android:label="Video List">
 
         <action
             android:id="@+id/action_video_list_fragment_to_video_player_fragment"
@@ -28,19 +27,19 @@
     <fragment
         android:id="@+id/video_player_fragment"
         android:name="com.example.android.camera2.video.java_fragments.video_player.VideoPlayerFragment"
-        android:label="Video Player" >
+        android:label="Video Player">
 
         <argument
             android:name="video_path"
             app:argType="string"
-            app:nullable="false"/>
+            app:nullable="false" />
 
     </fragment>
 
     <fragment
         android:id="@+id/permissions_fragment"
         android:name="com.example.android.camera2.video.kt_fragments.PermissionsFragment"
-        android:label="Permissions" >
+        android:label="Permissions">
 
         <action
             android:id="@+id/action_permissions_to_selector"
@@ -53,7 +52,7 @@
     <fragment
         android:id="@+id/selector_fragment"
         android:name="com.example.android.camera2.video.kt_fragments.SelectorFragment"
-        android:label="Selector" >
+        android:label="Selector">
 
         <action
             android:id="@+id/action_selector_fragment_to_preview_fragment"
@@ -64,12 +63,12 @@
     <fragment
         android:id="@+id/preview_fragment"
         android:name="com.example.android.camera2.video.kt_fragments.PreviewFragment"
-        android:label="Preview" >
+        android:label="Preview">
 
         <argument
             android:name="camera_id"
             app:argType="string"
-            app:nullable="false"/>
+            app:nullable="false" />
 
         <argument
             android:name="width"
@@ -119,7 +118,7 @@
             android:id="@+id/action_preview_to_permissions"
             app:destination="@id/permissions_fragment"
             app:popUpTo="@id/preview_fragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
 
     </fragment>
 

@@ -19,15 +19,17 @@ import java.nio.ByteBuffer
 /**
  * Encodes video by streaming to disk.
  */
-class EncoderWrapper(width: Int,
-                     height: Int,
-                     bitRate: Int,
-                     frameRate: Int,
-                     dynamicRange: Long,
-                     orientationHint: Int,
-                     outputFile: File,
-                     useMediaRecorder: Boolean,
-                     videoCodec: Int) {
+class EncoderWrapper(
+    width: Int,
+    height: Int,
+    bitRate: Int,
+    frameRate: Int,
+    dynamicRange: Long,
+    orientationHint: Int,
+    outputFile: File,
+    useMediaRecorder: Boolean,
+    videoCodec: Int
+) {
     companion object {
         val TAG = "EncoderWrapper"
         val VERBOSE = false
@@ -113,11 +115,14 @@ class EncoderWrapper(width: Int,
 
             val videoEncoder = when (mVideoCodec) {
                 VIDEO_CODEC_ID_H264 ->
-                        MediaRecorder.VideoEncoder.H264
+                    MediaRecorder.VideoEncoder.H264
+
                 VIDEO_CODEC_ID_HEVC ->
-                        MediaRecorder.VideoEncoder.HEVC
+                    MediaRecorder.VideoEncoder.HEVC
+
                 VIDEO_CODEC_ID_AV1 ->
-                        MediaRecorder.VideoEncoder.AV1
+                    MediaRecorder.VideoEncoder.AV1
+
                 else -> throw IllegalArgumentException("Unknown video codec id")
             }
 
@@ -140,22 +145,30 @@ class EncoderWrapper(width: Int,
             val codecProfile = when (mVideoCodec) {
                 VIDEO_CODEC_ID_HEVC -> when {
                     dynamicRange == DynamicRangeProfiles.HLG10 ->
-                            MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10
+                        MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10
+
                     dynamicRange == DynamicRangeProfiles.HDR10 ->
-                            MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10
+                        MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10
+
                     dynamicRange == DynamicRangeProfiles.HDR10_PLUS ->
-                            MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10Plus
+                        MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10Plus
+
                     else -> -1
                 }
+
                 VIDEO_CODEC_ID_AV1 -> when {
                     dynamicRange == DynamicRangeProfiles.HLG10 ->
-                            MediaCodecInfo.CodecProfileLevel.AV1ProfileMain10
+                        MediaCodecInfo.CodecProfileLevel.AV1ProfileMain10
+
                     dynamicRange == DynamicRangeProfiles.HDR10 ->
-                            MediaCodecInfo.CodecProfileLevel.AV1ProfileMain10HDR10
+                        MediaCodecInfo.CodecProfileLevel.AV1ProfileMain10HDR10
+
                     dynamicRange == DynamicRangeProfiles.HDR10_PLUS ->
-                            MediaCodecInfo.CodecProfileLevel.AV1ProfileMain10HDR10Plus
+                        MediaCodecInfo.CodecProfileLevel.AV1ProfileMain10HDR10Plus
+
                     else -> -1
                 }
+
                 else -> -1
             }
 
@@ -163,8 +176,10 @@ class EncoderWrapper(width: Int,
 
             // Set some properties.  Failing to specify some of these can cause the MediaCodec
             // configure() call to throw an unhelpful exception.
-            format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                    MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
+            format.setInteger(
+                MediaFormat.KEY_COLOR_FORMAT,
+                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
+            )
             format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate)
             format.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate)
             format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL)
@@ -242,7 +257,7 @@ class EncoderWrapper(width: Int,
             handler.sendMessage(handler.obtainMessage(EncoderThread.EncoderHandler.MSG_SHUTDOWN))
             try {
                 mEncoderThread!!.join()
-            } catch (ie: InterruptedException ) {
+            } catch (ie: InterruptedException) {
                 Log.w(TAG, "Encoder thread join() was interrupted", ie)
             }
 
@@ -258,9 +273,11 @@ class EncoderWrapper(width: Int,
     public fun frameAvailable() {
         if (!mUseMediaRecorder) {
             val handler = mEncoderThread!!.getHandler()
-            handler.sendMessage(handler.obtainMessage(
-                EncoderThread.EncoderHandler.MSG_FRAME_AVAILABLE
-            ))
+            handler.sendMessage(
+                handler.obtainMessage(
+                    EncoderThread.EncoderHandler.MSG_FRAME_AVAILABLE
+                )
+            )
         }
     }
 
@@ -285,9 +302,11 @@ class EncoderWrapper(width: Int,
      * should be fully started before the thread is created, and not shut down until this
      * thread has been joined.
      */
-    private class EncoderThread(mediaCodec: MediaCodec,
-                                outputFile: File,
-                                orientationHint: Int): Thread() {
+    private class EncoderThread(
+        mediaCodec: MediaCodec,
+        outputFile: File,
+        orientationHint: Int
+    ) : Thread() {
         val mEncoder = mediaCodec
         var mEncodedFormat: MediaFormat? = null
         val mBufferInfo = MediaCodec.BufferInfo()
@@ -312,14 +331,14 @@ class EncoderWrapper(width: Int,
             Looper.prepare()
             mHandler = EncoderHandler(this)    // must create on encoder thread
             Log.d(TAG, "encoder thread ready")
-            synchronized (mLock) {
+            synchronized(mLock) {
                 mReady = true
                 mLock.notify()    // signal waitUntilReady()
             }
 
             Looper.loop()
 
-            synchronized (mLock) {
+            synchronized(mLock) {
                 mReady = false
                 mHandler = null
             }
@@ -332,11 +351,12 @@ class EncoderWrapper(width: Int,
          * Call from non-encoder thread.
          */
         public fun waitUntilReady() {
-            synchronized (mLock) {
+            synchronized(mLock) {
                 while (!mReady) {
                     try {
                         mLock.wait()
-                    } catch (ie: InterruptedException) { /* not expected */ }
+                    } catch (ie: InterruptedException) { /* not expected */
+                    }
                 }
             }
         }
@@ -347,7 +367,7 @@ class EncoderWrapper(width: Int,
          * Call from non-encoder thread.
          */
         public fun waitForFirstFrame() {
-            synchronized (mLock) {
+            synchronized(mLock) {
                 while (mFrameNum < 1) {
                     try {
                         mLock.wait()
@@ -363,7 +383,7 @@ class EncoderWrapper(width: Int,
          * Returns the Handler used to send messages to the encoder thread.
          */
         public fun getHandler(): EncoderHandler {
-            synchronized (mLock) {
+            synchronized(mLock) {
                 // Confirm ready state.
                 if (!mReady) {
                     throw RuntimeException("not ready")
@@ -395,13 +415,16 @@ class EncoderWrapper(width: Int,
                 } else if (encoderStatus < 0) {
                     Log.w(
                         TAG, "unexpected result from encoder.dequeueOutputBuffer: " +
-                            encoderStatus)
+                                encoderStatus
+                    )
                     // let's ignore it
                 } else {
                     var encodedData: ByteBuffer? = mEncoder.getOutputBuffer(encoderStatus)
                     if (encodedData == null) {
-                        throw RuntimeException("encoderOutputBuffer " + encoderStatus +
-                                " was null");
+                        throw RuntimeException(
+                            "encoderOutputBuffer " + encoderStatus +
+                                    " was null"
+                        );
                     }
 
                     if ((mBufferInfo.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
@@ -433,7 +456,8 @@ class EncoderWrapper(width: Int,
                         if (VERBOSE) {
                             Log.d(
                                 TAG, "sent " + mBufferInfo.size + " bytes to muxer, ts=" +
-                                    mBufferInfo.presentationTimeUs)
+                                        mBufferInfo.presentationTimeUs
+                            )
                         }
                     }
 
@@ -457,7 +481,7 @@ class EncoderWrapper(width: Int,
         fun frameAvailable() {
             if (VERBOSE) Log.d(TAG, "frameAvailable")
             if (drainEncoder()) {
-                synchronized (mLock) {
+                synchronized(mLock) {
                     mFrameNum++
                     mLock.notify()
                 }
@@ -480,7 +504,7 @@ class EncoderWrapper(width: Int,
          * <p>
          * The object is created on the encoder thread.
          */
-        public class EncoderHandler(et: EncoderThread): Handler() {
+        public class EncoderHandler(et: EncoderThread) : Handler() {
             companion object {
                 val MSG_FRAME_AVAILABLE: Int = 0
                 val MSG_SHUTDOWN: Int = 1

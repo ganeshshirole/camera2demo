@@ -20,8 +20,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.camera.utils.GenericListAdapter
-import com.example.android.camera2.video.utils.EncoderWrapper.Companion.VIDEO_CODEC_ID_H264
 import com.example.android.camera2.video.R
+import com.example.android.camera2.video.utils.EncoderWrapper.Companion.VIDEO_CODEC_ID_H264
 
 /**
  * In this [Fragment] we let users pick a camera, size and FPS to use for high

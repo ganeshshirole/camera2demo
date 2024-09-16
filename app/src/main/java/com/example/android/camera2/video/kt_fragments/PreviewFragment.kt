@@ -40,11 +40,11 @@ import androidx.navigation.fragment.navArgs
 import com.example.android.camera.utils.getPreviewOutputSize
 import com.example.android.camera2.video.BuildConfig
 import com.example.android.camera2.video.CameraActivity
+import com.example.android.camera2.video.R
+import com.example.android.camera2.video.databinding.FragmentPreviewBinding
 import com.example.android.camera2.video.utils.EncoderWrapper
 import com.example.android.camera2.video.utils.Pipeline
-import com.example.android.camera2.video.R
 import com.example.android.camera2.video.utils.SoftwarePipeline
-import com.example.android.camera2.video.databinding.FragmentPreviewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -81,8 +81,10 @@ class PreviewFragment : Fragment() {
 //            HardwarePipeline(args.width, args.height, args.fps, args.filterOn, args.transfer,
 //                    args.dynamicRange, characteristics, encoder, fragmentBinding.viewFinder)
 //        } else {
-            SoftwarePipeline(args.width, args.height, args.fps, args.filterOn,
-                    args.dynamicRange, characteristics, encoder, fragmentBinding.viewFinder)
+        SoftwarePipeline(
+            args.width, args.height, args.fps, args.filterOn,
+            args.dynamicRange, characteristics, encoder, fragmentBinding.viewFinder
+        )
 //        }
     }
 
@@ -185,17 +187,22 @@ class PreviewFragment : Fragment() {
             }
 
             override fun surfaceChanged(
-                    holder: SurfaceHolder,
-                    format: Int,
-                    width: Int,
-                    height: Int) = Unit
+                holder: SurfaceHolder,
+                format: Int,
+                width: Int,
+                height: Int
+            ) = Unit
 
             override fun surfaceCreated(holder: SurfaceHolder) {
 
                 // Selects appropriate preview size and configures view finder
                 val previewSize = getPreviewOutputSize(
-                        fragmentBinding.viewFinder.display, characteristics, SurfaceHolder::class.java)
-                Log.d(TAG, "View finder size: ${fragmentBinding.viewFinder.width} x ${fragmentBinding.viewFinder.height}")
+                    fragmentBinding.viewFinder.display, characteristics, SurfaceHolder::class.java
+                )
+                Log.d(
+                    TAG,
+                    "View finder size: ${fragmentBinding.viewFinder.width} x ${fragmentBinding.viewFinder.height}"
+                )
                 Log.d(TAG, "Selected preview size: $previewSize")
                 fragmentBinding.viewFinder.setAspectRatio(previewSize.width, previewSize.height)
 
@@ -227,9 +234,11 @@ class PreviewFragment : Fragment() {
             orientationHint = 0
         }
 
-        return EncoderWrapper(width, height, RECORDER_VIDEO_BITRATE, args.fps,
-                args.dynamicRange, orientationHint, outputFile, args.useMediaRecorder,
-                args.videoCodec)
+        return EncoderWrapper(
+            width, height, RECORDER_VIDEO_BITRATE, args.fps,
+            args.dynamicRange, orientationHint, outputFile, args.useMediaRecorder,
+            args.videoCodec
+        )
     }
 
     /**
@@ -248,8 +257,10 @@ class PreviewFragment : Fragment() {
         val previewTargets = pipeline.getPreviewTargets()
 
         // Start a capture session using our open camera and list of Surfaces where frames will go
-        session = createCaptureSession(camera, previewTargets, cameraHandler,
-                recordingCompleteOnClose = (pipeline !is SoftwarePipeline))
+        session = createCaptureSession(
+            camera, previewTargets, cameraHandler,
+            recordingCompleteOnClose = (pipeline !is SoftwarePipeline)
+        )
 
         // Sends the capture request as frequently as possible until the session is torn down or
         //  session.stopRepeating() is called
@@ -268,7 +279,7 @@ class PreviewFragment : Fragment() {
                     if (!recordingStarted) {
                         // Prevents screen rotation during the video recording
                         requireActivity().requestedOrientation =
-                                ActivityInfo.SCREEN_ORIENTATION_LOCKED
+                            ActivityInfo.SCREEN_ORIENTATION_LOCKED
 
                         pipeline.actionDown(encoderSurface)
 
@@ -285,19 +296,24 @@ class PreviewFragment : Fragment() {
                             val recordTargets = pipeline.getRecordTargets()
 
                             session.close()
-                            session = createCaptureSession(camera, recordTargets, cameraHandler,
-                                    recordingCompleteOnClose = true)
+                            session = createCaptureSession(
+                                camera, recordTargets, cameraHandler,
+                                recordingCompleteOnClose = true
+                            )
 
                             session.setRepeatingRequest(recordRequest,
-                                    object : CameraCaptureSession.CaptureCallback() {
-                                override fun onCaptureCompleted(session: CameraCaptureSession,
-                                                                request: CaptureRequest,
-                                                                result: TotalCaptureResult) {
-                                    if (isCurrentlyRecording()) {
-                                        encoder.frameAvailable()
+                                object : CameraCaptureSession.CaptureCallback() {
+                                    override fun onCaptureCompleted(
+                                        session: CameraCaptureSession,
+                                        request: CaptureRequest,
+                                        result: TotalCaptureResult
+                                    ) {
+                                        if (isCurrentlyRecording()) {
+                                            encoder.frameAvailable()
+                                        }
                                     }
-                                }
-                            }, cameraHandler)
+                                }, cameraHandler
+                            )
                         }
 
                         recordingStartMillis = System.currentTimeMillis()
@@ -306,10 +322,12 @@ class PreviewFragment : Fragment() {
                         // Set color to RED and show timer when recording begins
                         fragmentBinding.captureButton.post {
                             fragmentBinding.captureButton.background =
-                                    context?.let {
-                                        ContextCompat.getDrawable(it,
-                                                R.drawable.ic_shutter_pressed)
-                                    }
+                                context?.let {
+                                    ContextCompat.getDrawable(
+                                        it,
+                                        R.drawable.ic_shutter_pressed
+                                    )
+                                }
                             fragmentBinding.captureTimer?.visibility = View.VISIBLE
                             fragmentBinding.captureTimer?.start()
                         }
@@ -331,10 +349,12 @@ class PreviewFragment : Fragment() {
                     // Set color to GRAY and hide timer when recording stops
                     fragmentBinding.captureButton.post {
                         fragmentBinding.captureButton.background =
-                                context?.let {
-                                    ContextCompat.getDrawable(it,
-                                            R.drawable.ic_shutter_normal)
-                                }
+                            context?.let {
+                                ContextCompat.getDrawable(
+                                    it,
+                                    R.drawable.ic_shutter_normal
+                                )
+                            }
                         fragmentBinding.captureTimer?.visibility = View.GONE
                         fragmentBinding.captureTimer?.stop()
                     }
@@ -344,7 +364,7 @@ class PreviewFragment : Fragment() {
 
                     // Unlocks screen rotation after recording finished
                     requireActivity().requestedOrientation =
-                            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
                     // Requires recording of at least MIN_REQUIRED_RECORDING_TIME_MILLIS
                     val elapsedTimeMillis = System.currentTimeMillis() - recordingStartMillis
@@ -361,16 +381,18 @@ class PreviewFragment : Fragment() {
                     if (encoder.shutdown()) {
                         // Broadcasts the media file to the rest of the system
                         MediaScannerConnection.scanFile(
-                                requireView().context, arrayOf(outputFile.absolutePath), null, null)
+                            requireView().context, arrayOf(outputFile.absolutePath), null, null
+                        )
 
                         if (outputFile.exists()) {
                             // Launch external activity via intent to play video recorded using our provider
                             startActivity(Intent().apply {
                                 action = Intent.ACTION_VIEW
                                 type = MimeTypeMap.getSingleton()
-                                        .getMimeTypeFromExtension(outputFile.extension)
+                                    .getMimeTypeFromExtension(outputFile.extension)
                                 val authority = "${BuildConfig.APPLICATION_ID}.provider"
-                                data = FileProvider.getUriForFile(view.context, authority, outputFile)
+                                data =
+                                    FileProvider.getUriForFile(view.context, authority, outputFile)
                                 flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
                                         Intent.FLAG_ACTIVITY_CLEAR_TOP
                             })
@@ -379,14 +401,18 @@ class PreviewFragment : Fragment() {
                             //  1. Move the callback to ACTION_DOWN, activating it on the second press
                             //  2. Add an animation to the button before the user can press it again
                             Handler(Looper.getMainLooper()).post {
-                                Toast.makeText(activity, R.string.error_file_not_found,
-                                        Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    activity, R.string.error_file_not_found,
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     } else {
                         Handler(Looper.getMainLooper()).post {
-                            Toast.makeText(activity, R.string.recorder_shutdown_error,
-                                    Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                activity, R.string.recorder_shutdown_error,
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                     Handler(Looper.getMainLooper()).post {
@@ -402,9 +428,9 @@ class PreviewFragment : Fragment() {
     /** Opens the camera and returns the opened device (as the result of the suspend coroutine) */
     @SuppressLint("MissingPermission")
     private suspend fun openCamera(
-            manager: CameraManager,
-            cameraId: String,
-            handler: Handler? = null
+        manager: CameraManager,
+        cameraId: String,
+        handler: Handler? = null
     ): CameraDevice = suspendCancellableCoroutine { cont ->
         manager.openCamera(cameraId, object : CameraDevice.StateCallback() {
             override fun onOpened(device: CameraDevice) = cont.resume(device)
@@ -415,7 +441,7 @@ class PreviewFragment : Fragment() {
             }
 
             override fun onError(device: CameraDevice, error: Int) {
-                val msg = when(error) {
+                val msg = when (error) {
                     ERROR_CAMERA_DEVICE -> "Fatal (device)"
                     ERROR_CAMERA_DISABLED -> "Device policy"
                     ERROR_CAMERA_IN_USE -> "Camera in use"
@@ -434,10 +460,10 @@ class PreviewFragment : Fragment() {
      * Creates a [CameraCaptureSession] with the dynamic range profile set.
      */
     private fun setupSessionWithDynamicRangeProfile(
-            device: CameraDevice,
-            targets: List<Surface>,
-            handler: Handler,
-            stateCallback: CameraCaptureSession.StateCallback
+        device: CameraDevice,
+        targets: List<Surface>,
+        handler: Handler,
+        stateCallback: CameraCaptureSession.StateCallback
     ): Boolean {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             val outputConfigs = mutableListOf<OutputConfiguration>()
@@ -447,11 +473,14 @@ class PreviewFragment : Fragment() {
                 outputConfigs.add(outputConfig)
             }
 
-            val sessionConfig = SessionConfiguration(SessionConfiguration.SESSION_REGULAR,
-                    outputConfigs, HandlerExecutor(handler), stateCallback)
+            val sessionConfig = SessionConfiguration(
+                SessionConfiguration.SESSION_REGULAR,
+                outputConfigs, HandlerExecutor(handler), stateCallback
+            )
             if (android.os.Build.VERSION.SDK_INT >=
-                    android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE
-                    && args.colorSpace != ColorSpaceProfiles.UNSPECIFIED) {
+                android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+                && args.colorSpace != ColorSpaceProfiles.UNSPECIFIED
+            ) {
                 sessionConfig.setColorSpace(ColorSpace.Named.values()[args.colorSpace])
             }
             device.createCaptureSession(sessionConfig)
@@ -467,12 +496,12 @@ class PreviewFragment : Fragment() {
      * suspend coroutine)
      */
     private suspend fun createCaptureSession(
-            device: CameraDevice,
-            targets: List<Surface>,
-            handler: Handler,
-            recordingCompleteOnClose: Boolean
+        device: CameraDevice,
+        targets: List<Surface>,
+        handler: Handler,
+        recordingCompleteOnClose: Boolean
     ): CameraCaptureSession = suspendCoroutine { cont ->
-        val stateCallback = object: CameraCaptureSession.StateCallback() {
+        val stateCallback = object : CameraCaptureSession.StateCallback() {
             override fun onConfigured(session: CameraCaptureSession) = cont.resume(session)
 
             override fun onConfigureFailed(session: CameraCaptureSession) {

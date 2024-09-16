@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -19,8 +18,6 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
-import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -50,7 +47,6 @@ import com.example.android.camera2.video.R;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,6 +56,11 @@ import java.util.concurrent.TimeUnit;
 
 public class Camera2VideoFragment extends Fragment
         implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+
+    // Movement Detection
+    private MovementDetector movementDetector;
+    private final Handler handlerReverseDirectionMessage = new Handler();
+    private final Handler handlerFastMovementMessage = new Handler();
 
     private static final int SENSOR_ORIENTATION_DEFAULT_DEGREES = 90;
     private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
@@ -110,6 +111,16 @@ public class Camera2VideoFragment extends Fragment
      * Text to record video time
      */
     private TextView mTextField;
+
+    /**
+     * Text to Fast Movement Detection
+     */
+    private TextView mFastMovementMessageTextView;
+
+    /**
+     * Text to Reverse Mode Detection
+     */
+    private TextView mReverseDirectionMessageTextView;
 
     /**
      * A reference to the opened {@link CameraDevice}.
@@ -294,10 +305,53 @@ public class Camera2VideoFragment extends Fragment
         mButtonVideo = view.findViewById(R.id.video);
         mButtonVideoList = view.findViewById(R.id.videoButton);
         mTextField = view.findViewById(R.id.textField);
+        mFastMovementMessageTextView = view.findViewById(R.id.fastMovementMessageTextView);
+        mReverseDirectionMessageTextView = view.findViewById(R.id.reverseDirectionMessageTextView);
         mButtonVideo.setOnClickListener(this);
         mButtonVideoList.setOnClickListener(this);
 
         navController = Navigation.findNavController(requireActivity(), R.id.fragment_container);
+
+        initMovementDetector();
+    }
+
+    private void initMovementDetector() {
+        // Initialize the movement detector and set the listener
+        movementDetector = new MovementDetector(requireContext(), new MovementDetector.MovementListener() {
+            @Override
+            public void onRightToLeftMovement() {
+                // Show message when moving from right to left
+                showReverseDirectionMessage();
+            }
+
+            @Override
+            public void onFastMovement() {
+                // Show message when fast movement is detected
+                showFastMovementMessage();
+            }
+        });
+    }
+
+    private void showFastMovementMessage() {
+        // Cancel any previous tasks that would clear the message
+        handlerFastMovementMessage.removeCallbacksAndMessages(null);
+
+        // Display the new message on the TextView
+        mFastMovementMessageTextView.setText(R.string.please_move_camera_slower);
+
+        // Schedule to remove the message after 3 seconds (3000 milliseconds)
+        handlerFastMovementMessage.postDelayed(() -> mFastMovementMessageTextView.setText(""), 3000); // 3 seconds delay
+    }
+
+    private void showReverseDirectionMessage() {
+        // Cancel any previous tasks that would clear the message
+        handlerReverseDirectionMessage.removeCallbacksAndMessages(null);
+
+        // Display the new message on the TextView
+        mReverseDirectionMessageTextView.setText(R.string.please_record_video_right_direction);
+
+        // Schedule to remove the message after 3 seconds (3000 milliseconds)
+        handlerReverseDirectionMessage.postDelayed(() -> mReverseDirectionMessageTextView.setText(""), 3000); // 3 seconds delay
     }
 
     @Override
@@ -648,6 +702,9 @@ public class Camera2VideoFragment extends Fragment
         }
         try {
 
+            // Start movement detection when activity resumes
+            movementDetector.start();
+
             // Prevents screen rotation during the video recording
             requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
@@ -673,7 +730,7 @@ public class Camera2VideoFragment extends Fragment
             mPreviewBuilder.addTarget(recorderSurface);
 
             // Set up ImageReader for Image Analysis
-//            ImageReader imageReader = ImageReader.newInstance(mPreviewSize.getWidth(), mPreviewSize.getHeight(), ImageFormat.YUV_420_888, 2);
+//            ImageReader imageReader = ImageReader.newInstance(mPreviewSize.getWidth() / 2, mPreviewSize.getHeight() / 2, ImageFormat.YUV_420_888, 2);
 //            imageReader.setOnImageAvailableListener(onImageAvailableListener, mBackgroundHandler);
 //            Surface imageReaderSurface = imageReader.getSurface();
 //            surfaces.add(imageReaderSurface);
@@ -709,30 +766,26 @@ public class Camera2VideoFragment extends Fragment
     }
 
     // ImageReader.OnImageAvailableListener to process frames
-    private final ImageReader.OnImageAvailableListener onImageAvailableListener = reader -> {
-        Image image = reader.acquireLatestImage();
-        if (image != null) {
-            processImage(image);
-            image.close();
-        }
-    };
+//    private final ImageReader.OnImageAvailableListener onImageAvailableListener = reader -> {
+//        Image image = reader.acquireLatestImage();
+//        if (image != null) {
+//            processImage(image);
+//            image.close();
+//        }
+//    };
 
     // Method to process each frame using ML Kit or other libraries
-    private void processImage(Image image) {
-        // Example: Convert the image to a format suitable for ML Kit
-        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-        byte[] bytes = new byte[buffer.remaining()];
-        buffer.get(bytes);
-
-        // Use ML Kit or other image processing library here
-//        InputImage inputImage = InputImage.fromByteArray(bytes, image.getWidth(), image.getHeight(),
-//                image.getImageInfo().getRotationDegrees(), InputImage.IMAGE_FORMAT_NV21);
-
-        // Example ML Kit processing
-        // Your image analysis logic here
-        // e.g., barcode scanning, object detection, etc.
-//        analyzeImageWithMLKit(inputImage);
-    }
+//    private void processImage(Image image) {
+//        // Example: Convert the image to a format suitable for ML Kit
+//        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+//        byte[] bytes = new byte[buffer.remaining()];
+//        buffer.get(bytes);
+//
+//        // Use ML Kit or other image processing library here
+////        InputImage inputImage = InputImage.fromByteArray(bytes, image.getWidth(), image.getHeight(),
+////                image.getImageInfo().getRotationDegrees(), InputImage.IMAGE_FORMAT_NV21);
+//
+//    }
 
     private void closePreviewSession() {
         if (mPreviewSession != null) {
@@ -743,7 +796,8 @@ public class Camera2VideoFragment extends Fragment
 
     private void stopRecordingVideo() {
         try {
-
+            // Stop movement detection when activity pauses
+            movementDetector.stop();
             // UI
             // Unlocks screen rotation after recording finished
             requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);

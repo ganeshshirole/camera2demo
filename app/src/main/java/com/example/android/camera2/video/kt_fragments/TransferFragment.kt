@@ -22,9 +22,9 @@ import com.example.android.camera2.video.R
 class TransferFragment : Fragment() {
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? = RecyclerView(requireContext())
 
     @SuppressLint("MissingPermission")
@@ -39,7 +39,7 @@ class TransferFragment : Fragment() {
             val layoutId = android.R.layout.simple_list_item_1
             adapter = GenericListAdapter(transferList, itemLayoutId = layoutId) { view, item, _ ->
                 view.findViewById<TextView>(android.R.id.text1).text =
-                        "Preview Transfer " + item.name
+                    "Preview Transfer " + item.name
                 view.setOnClickListener {
                     val navController =
                         Navigation.findNavController(requireActivity(), R.id.fragment_container)
@@ -52,8 +52,9 @@ class TransferFragment : Fragment() {
     companion object {
 
         private data class TransferInfo(
-                val name: String,
-                val id: Int)
+            val name: String,
+            val id: Int
+        )
 
         public val PQ_STR = "PQ"
         public val LINEAR_STR = "LINEAR"

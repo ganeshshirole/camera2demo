@@ -9,27 +9,37 @@ import android.view.Surface
 import com.example.android.camera.utils.AutoFitSurfaceView
 
 
-class SoftwarePipeline(width: Int, height: Int, fps: Int, filterOn: Boolean,
-                       dynamicRange: Long, characteristics: CameraCharacteristics, encoder: EncoderWrapper,
-                       viewFinder: AutoFitSurfaceView) : Pipeline(width, height, fps, filterOn,
-                dynamicRange, characteristics, encoder, viewFinder) {
+class SoftwarePipeline(
+    width: Int, height: Int, fps: Int, filterOn: Boolean,
+    dynamicRange: Long, characteristics: CameraCharacteristics, encoder: EncoderWrapper,
+    viewFinder: AutoFitSurfaceView
+) : Pipeline(
+    width, height, fps, filterOn,
+    dynamicRange, characteristics, encoder, viewFinder
+) {
 
-    override fun createPreviewRequest(session: CameraCaptureSession,
-            previewStabilization: Boolean): CaptureRequest? {
+    override fun createPreviewRequest(
+        session: CameraCaptureSession,
+        previewStabilization: Boolean
+    ): CaptureRequest? {
         // Capture request holds references to target surfaces
         return session.device.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW).apply {
             // Add the preview surface target
             addTarget(viewFinder.holder.surface)
 
             if (previewStabilization) {
-                set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE,
-                        CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_PREVIEW_STABILIZATION)
+                set(
+                    CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE,
+                    CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_PREVIEW_STABILIZATION
+                )
             }
         }.build()
     }
 
-    override fun createRecordRequest(session: CameraCaptureSession,
-            previewStabilization: Boolean): CaptureRequest {
+    override fun createRecordRequest(
+        session: CameraCaptureSession,
+        previewStabilization: Boolean
+    ): CaptureRequest {
         // Capture request holds references to target surfaces
         return session.device.createCaptureRequest(CameraDevice.TEMPLATE_RECORD).apply {
             // Add the preview and recording surface targets
@@ -40,8 +50,10 @@ class SoftwarePipeline(width: Int, height: Int, fps: Int, filterOn: Boolean,
             set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, Range(fps, fps))
 
             if (previewStabilization) {
-                set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE,
-                        CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_PREVIEW_STABILIZATION)
+                set(
+                    CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE,
+                    CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_PREVIEW_STABILIZATION
+                )
             }
         }.build()
     }

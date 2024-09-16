@@ -79,8 +79,9 @@ dependencies {
 
     // EGL compat
     implementation 'androidx.graphics:graphics-core:1.0.1'
-    implementation 'com.google.mlkit:vision-common:17.3.0'
+//    implementation 'com.google.mlkit:vision-common:17.3.0'
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
+    implementation 'org.opencv:opencv:4.10.0'
 
 //    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 //    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.5'
